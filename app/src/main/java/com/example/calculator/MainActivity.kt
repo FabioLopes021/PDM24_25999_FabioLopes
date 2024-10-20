@@ -44,7 +44,7 @@ object CalculatorMemory{
 
 
     public fun addNumber(number: String){
-        if(counter == 0){
+        if(counter % 2 == 0){
             if ( total  == "0"){
                 total = number
             }else{
@@ -101,47 +101,47 @@ object CalculatorMemory{
         }
     }
 
-    public fun calcAction(action: String){
-        when(action){
+    public fun calcAction(action: String) {
+        when (action) {
             "x" -> {
-                if(counter > 0)
+                if (counter > 0)
                     finishAction("")
                 actualAction = "x"
                 total1 = "0"
                 counter++
             }
+
             "/" -> {
-                if(counter > 0)
+                if (counter > 0)
                     finishAction("")
                 actualAction = "/"
                 total1 = "0"
                 counter++
             }
+
             "+" -> {
-                if(counter > 0)
+                if (counter > 0)
                     finishAction("")
                 actualAction = "+"
                 total1 = "0"
                 counter++
             }
+
             "-" -> {
-                if(counter > 0)
+                if (counter > 0)
                     finishAction("")
                 actualAction = "-"
                 total1 = "0"
                 counter++
             }
+
             "=" -> {
-                if(actualAction != "=" && actualAction != ""){
-                    if(counter > 0)
+                if (actualAction != "=" && actualAction != "") {
+                    if (counter > 0)
                         finishAction("")
                     actualAction = "="
                     total1 = "0"
                     counter++
-//                    if(counter % 2 == 0)
-//                        counter += 2
-//                    else
-//                        counter++
                 }
             }
         }
