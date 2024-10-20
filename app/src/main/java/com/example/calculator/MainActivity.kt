@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.calculator.ui.theme.CalculatorTheme
 import androidx.compose.ui.graphics.Color
+import kotlin.math.sqrt
 
 
 object CalculatorMemory{
@@ -69,82 +70,111 @@ object CalculatorMemory{
         }
     }
 
-    public fun finishAction(){
-        if(actualAction != ""){
+    public fun finishAction(act: String){
+        if(actualAction != "" && act == "") {
             val totalaux = total.toDouble()
             val total1aux = total1.toDouble()
             var result = 0.0
             var result1 = 0
-            when(actualAction){
+            when (actualAction) {
                 "x" -> {
                     result = totalaux * total1aux
                     total = result.toString()
                 }
+
                 "/" -> {
                     result = totalaux / total1aux
                     total = result.toString()
                 }
+
                 "+" -> {
                     result = totalaux + total1aux
                     total = result.toString()
                 }
+
                 "-" -> {
                     result = totalaux - total1aux
                     total = result.toString()
                 }
-                "%" -> {
-                    result1 = totalaux.toInt() % total1aux.toInt()
-                    total = result1.toString()
-                }
             }
         }
-
     }
 
     public fun calcAction(action: String){
         when(action){
             "x" -> {
                 if(counter > 0)
-                    finishAction()
+                    finishAction("")
                 actualAction = "x"
                 total1 = "0"
                 counter++
             }
             "/" -> {
                 if(counter > 0)
-                    finishAction()
+                    finishAction("")
                 actualAction = "/"
                 total1 = "0"
                 counter++
             }
             "+" -> {
                 if(counter > 0)
-                    finishAction()
+                    finishAction("")
                 actualAction = "+"
                 total1 = "0"
                 counter++
             }
             "-" -> {
                 if(counter > 0)
-                    finishAction()
+                    finishAction("")
                 actualAction = "-"
                 total1 = "0"
                 counter++
             }
-            "%" -> {
-                if(counter > 0)
-                    finishAction()
-                actualAction = "%"
-                total1 = "0"
-                counter++
-            }
+//            "%" -> {
+//                finishAction("%")
+//            }
             "=" -> {
                 if(actualAction != "="){
                     if(counter > 0)
-                        finishAction()
+                        finishAction("")
                     actualAction = "="
                     total1 = "0"
                     counter++
+                }
+            }
+        }
+    }
+
+    fun subOperations(action: String){
+        var aux = 0.0
+        when(action){
+            "%" -> {
+                if(counter % 2 == 0){
+                    aux = total.toDouble() / 100
+                    total = aux.toString()
+                }else{
+                    aux = total1.toDouble() / 100
+                    total1 = aux.toString()
+                    calcAction("=")
+                }
+            }
+            "√" -> {
+                if(counter % 2 == 0){
+                    aux = sqrt(total.toDouble())
+                    total = aux.toString()
+                }else{
+                    aux = sqrt(total1.toDouble())
+                    total1 = aux.toString()
+                    calcAction("=")
+                }
+            }
+            "+/-" -> {
+                if(counter % 2 == 0){
+                    aux = -(total.toDouble())
+                    total = aux.toString()
+                }else{
+                    aux = -(total1.toDouble())
+                    total1 = aux.toString()
                 }
             }
         }
@@ -204,7 +234,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun Display(){
     Column(modifier = Modifier) {
         Row(verticalAlignment = Alignment.Top){
-            if(CalculatorMemory.getCounterValue() % 2 == 0){
+            if(CalculatorMemory.getCounterValue() % 2 == 0 || CalculatorMemory.getTotal1Value() == "0"){
                 Text(CalculatorMemory.getTotalValue())
             }else{
                 Text(CalculatorMemory.getTotal1Value())
@@ -251,15 +281,19 @@ fun Keyboard(){
         }
         Row(Modifier.fillMaxWidth()){
             Column ( modifier = Modifier.weight(1f)){
-                CreateButton("√", color = Color.Black, onClick =  {})
-            }
-            Column ( modifier = Modifier.weight(1f)){
-                CreateButton("%", color = Color.Black, onClick =  {
-                    CalculatorMemory.calcAction("%")
+                CreateButton("√", color = Color.Black, onClick =  {
+                    CalculatorMemory.subOperations("√")
                 })
             }
             Column ( modifier = Modifier.weight(1f)){
-                CreateButton("+/-", color = Color.Black, onClick =  {})
+                CreateButton("%", color = Color.Black, onClick =  {
+                    CalculatorMemory.subOperations("%")
+                })
+            }
+            Column ( modifier = Modifier.weight(1f)){
+                CreateButton("+/-", color = Color.Black, onClick =  {
+                    CalculatorMemory.subOperations("+/-")
+                })
             }
             Column ( modifier = Modifier.weight(1f)){
                 CreateButton("CE", color = Color.Red, onClick =  {})
