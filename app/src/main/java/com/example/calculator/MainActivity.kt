@@ -40,6 +40,7 @@ object CalculatorMemory{
     private var total1 by mutableStateOf("0")
     private var counter by mutableStateOf(0)
     private var actualAction by mutableStateOf("")
+    private var memory by mutableStateOf("0")
 
 
     public fun addNumber(number: String){
@@ -130,16 +131,17 @@ object CalculatorMemory{
                 total1 = "0"
                 counter++
             }
-//            "%" -> {
-//                finishAction("%")
-//            }
             "=" -> {
-                if(actualAction != "="){
+                if(actualAction != "=" && actualAction != ""){
                     if(counter > 0)
                         finishAction("")
                     actualAction = "="
                     total1 = "0"
                     counter++
+//                    if(counter % 2 == 0)
+//                        counter += 2
+//                    else
+//                        counter++
                 }
             }
         }
@@ -169,12 +171,60 @@ object CalculatorMemory{
                 }
             }
             "+/-" -> {
+
                 if(counter % 2 == 0){
-                    aux = -(total.toDouble())
-                    total = aux.toString()
+                    if(total != "0" && total != "0.0"){
+                        aux = -(total.toDouble())
+                        total = aux.toString()
+                    }
                 }else{
-                    aux = -(total1.toDouble())
-                    total1 = aux.toString()
+                    if(total != "0" && total != "0.0") {
+                        aux = -(total1.toDouble())
+                        total1 = aux.toString()
+                    }
+                }
+            }
+            "CE" -> {
+                if(counter % 2 == 0){
+                    if(total != "0"){
+                        total = total.dropLast(1)
+                        if(total.isEmpty())
+                            total = "0"
+                    }
+                }else{
+                    if(total != "0") {
+                        total1 = total1.dropLast(1)
+                        if(total1.isEmpty())
+                            total1 = "0"
+                    }
+                }
+            }
+        }
+    }
+
+    fun memoryFunctions(action: String){
+        var aux = 0.0
+
+        when(action){
+            "MRC" ->{
+                if(counter % 2 == 0){
+                    total = memory
+                }else{
+                    total1 = memory
+                }
+            }
+            "M-" -> {
+                if(counter % 2 == 0){
+                    memory = (total.toDouble() -  memory.toDouble()).toString()
+                }else{
+                    memory = (total1.toDouble() -  memory.toDouble()).toString()
+                }
+            }
+            "M+" -> {
+                if(counter % 2 == 0){
+                    memory = (total.toDouble() +  memory.toDouble()).toString()
+                }else{
+                    memory = (total1.toDouble() +  memory.toDouble()).toString()
                 }
             }
         }
@@ -265,13 +315,19 @@ fun Keyboard(){
     Column ( modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.fillMaxWidth()){
             Column( modifier = Modifier.weight(1f)){
-                CreateButton("MRC", color = Color.Black, onClick =  {} )
+                CreateButton("MRC", color = Color.Black, onClick =  {
+                    CalculatorMemory.memoryFunctions("MRC")
+                } )
             }
             Column ( modifier = Modifier.weight(1f)){
-                CreateButton("M-", color = Color.Black, onClick =  {})
+                CreateButton("M-", color = Color.Black, onClick =  {
+                    CalculatorMemory.memoryFunctions("M-")
+                })
             }
             Column ( modifier = Modifier.weight(1f)){
-                CreateButton("M+", color = Color.Black, onClick =  {})
+                CreateButton("M+", color = Color.Black, onClick =  {
+                    CalculatorMemory.memoryFunctions("M+")
+                })
             }
             Column ( modifier = Modifier.weight(1f)){
                 CreateButton("ON/C", color = Color.Red, onClick =  {
@@ -296,7 +352,9 @@ fun Keyboard(){
                 })
             }
             Column ( modifier = Modifier.weight(1f)){
-                CreateButton("CE", color = Color.Red, onClick =  {})
+                CreateButton("CE", color = Color.Red, onClick =  {
+                    CalculatorMemory.subOperations("CE")
+                })
             }
         }
         Row(Modifier.fillMaxWidth()){
