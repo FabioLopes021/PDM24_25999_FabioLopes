@@ -31,18 +31,22 @@ fun HomePage(modifier: Modifier = Modifier, viewModel: HomeViewModel){
                 viewModel.getUserData()
             }
         ) {
-            Text(text = "Get Data")
-            userData.value?.name?.let {
+            if(userData.value != null){
                 Box (Modifier.fillMaxWidth(),
                     Alignment.TopStart
-                    ){
+                ){
                     Row (
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
-                        ){
-                        Text(text = "Name: $it")
+                    ){
+                        Text(text = "Name: ${userData.value!!.name} ")
+                        Text(text = "Name: ${userData.value!!.number} ")
+                        Text(text = "Name: ${userData.value!!.dataNascimento} ")
                     }
-                }
+            }
+            }
+            else{
+                Text(text = "Get Data")
             }
         }
     }
