@@ -1,5 +1,6 @@
 package com.example.projetoexemplo.presentation.coin_list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.projetoexemplo.data.remote.api.RetrofitInstance
@@ -21,8 +22,10 @@ class CoinDetailViewModel : ViewModel() {
     fun fetchCoinDetail(coinId: String) {
         viewModelScope.launch {
             try {
+                Log.d("CoinListViewModel", "Chamando fetchCoins")
                 coinDetail.value = getCoinDetailUseCase(coinId)
             } catch (e: Exception) {
+                Log.e("CoinListViewModel", "Erro ao buscar moedas: ${e.message}")
                 coinDetail.value = null
             }
         }

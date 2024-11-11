@@ -1,6 +1,7 @@
 package com.example.projetoexemplo
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,8 +15,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,15 +67,70 @@ fun MainScreen( ) {
             selectedCoinId = coinId
         }
     } else {
-//        val coinDetailViewModel: CoinDetailViewModel = viewModel()
-//        CoinDetailScreen(coinDetailViewModel, selectedCoinId!!) {
-//            selectedCoinId = null
-//        }
+        val coinDetailViewModel: CoinDetailViewModel = viewModel()
+        CoinDetailScreen(coinDetailViewModel, selectedCoinId!!) {
+            selectedCoinId = null
+        }
     }
 }
 
 
+@Composable
+fun CoinDetailScreen(
+    viewModel: CoinDetailViewModel,
+    coinId: String,
+    onBackPressed: () -> Unit
+) {
+    // Chama fetchCoinDetail uma vez quando a CoinDetailScreen é composta
+    LaunchedEffect(coinId) {
+        Log.d("CoinDetailScreen", "Fetching details for coin: $coinId")
+        viewModel.fetchCoinDetail(coinId)  // Chama o método para buscar os detalhes da moeda
+    }
 
+    // Observa o estado do CoinDetail
+    val coinDetail = viewModel.coinDetail.collectAsState().value
+
+    // Verifica se os dados estão carregados
+    if (coinDetail == null) {
+        // Mostra um loading enquanto os dados não são carregados
+        CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+    } else {
+        // Exibe os detalhes da moeda
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = coinDetail.name,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Text(
+                text = "Description:",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Gray
+            )
+            Text(
+                text = coinDetail.description,
+                fontSize = 16.sp,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Botão de voltar
+            Button(
+                onClick = onBackPressed,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text("Back")
+            }
+        }
+    }
+}
 
 @Composable
 fun CoinListScreen(
@@ -81,11 +139,13 @@ fun CoinListScreen(
 ) {
     // Chama fetchCoins uma vez quando a CoinListScreen é composta
     LaunchedEffect(Unit) {
+        Log.d("CoinListScreen", "Calling fetchCoins from CoinListScreen")
         viewModel.fetchCoins()
     }
 
     // Observa a lista de moedas do ViewModel
     val coinList = viewModel.coins.collectAsState()
+
 
     LazyColumn(
         modifier = Modifier
