@@ -139,7 +139,6 @@ fun CoinListScreen(
 ) {
     // Chama fetchCoins uma vez quando a CoinListScreen é composta
     LaunchedEffect(Unit) {
-        Log.d("CoinListScreen", "Calling fetchCoins from CoinListScreen")
         viewModel.fetchCoins()
     }
 

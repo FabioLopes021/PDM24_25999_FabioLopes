@@ -1,12 +1,13 @@
 package com.example.newsapp.domain.model
 
 data class Article (
-    val title: String,
+    val abstract: String,
     val section: String,
-    val webUrl: String
+    val subsection: String,
+    val title: String,
+    val url: String
 ){
     fun toArticle(): Article {
-        return Article(title = title, section = section, webUrl = webUrl)
-        //Implementar depois
+        return Article(abstract = abstract, section = section, subsection = subsection, title = title, url = url)
     }
 }

@@ -1,5 +1,6 @@
 package com.example.newsapp.data.remote.api
 
+import com.example.newsapp.data.remote.model.ApiResponseDto
 import com.example.newsapp.data.remote.model.ArticleDetailDto
 import com.example.newsapp.data.remote.model.ArticleDto
 import retrofit2.Retrofit
@@ -20,7 +21,7 @@ object RetrofitInstance {
 
 interface NewYorkTimesApi {
     @GET("v2/arts.json?api-key=6SV4QcALEfHDDToNDY3ADiBnMFdmabJ3")
-    suspend fun getArticls(): List<ArticleDto>
+    suspend fun getArticls(): ApiResponseDto
 
     @GET("v2/arts.json?api-key=6SV4QcALEfHDDToNDY3ADiBnMFdmabJ3")
     suspend fun getArticlsDetail(@Path("id") coinId: String): ArticleDetailDto

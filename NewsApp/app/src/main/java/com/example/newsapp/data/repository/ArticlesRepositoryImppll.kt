@@ -8,11 +8,10 @@ import com.example.newsapp.domain.repository.ArticleRepository
 
 class ArticlesRepositoryImppll(private val api: NewYorkTimesApi) : ArticleRepository {
     override suspend fun getArticles(): List<Article> {
-        return api.getArticls().map { it.toArticle() }
+        return api.getArticls().results.map { it.toArticle() }
     }
 
-    override suspend fun getArticlesDetail(coinId: String): ArticleDetail {
-        return api.getArticlsDetail(coinId).toArticleDetail()
-    }
-
+//    override suspend fun getArticlesDetail(coinId: String): ArticleDetail {
+//        return api.getArticlsDetail(coinId).toArticleDetail()
+//    }
 }

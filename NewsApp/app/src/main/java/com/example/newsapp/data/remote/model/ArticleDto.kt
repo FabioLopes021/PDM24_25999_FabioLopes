@@ -1,16 +1,23 @@
 package com.example.newsapp.data.remote.model
 
 import com.example.newsapp.domain.model.Article
+import com.google.gson.annotations.SerializedName
 
 
 data class ArticleDto (
-    val title: String,
+    @SerializedName("abstract")
+    val abstract: String,
+    @SerializedName("section")
     val section: String,
-    val webUrl: String,
+    @SerializedName("subsection")
+    val subsection: String,
+    @SerializedName("title")
+    val title: String,
+    @SerializedName("url")
+    val url: String
 ){
     fun toArticle(): Article {
-        return Article(title = title, section = section, webUrl = webUrl)
-        //Implementar depois
+        return Article(abstract = abstract, section = section, subsection = subsection, title = title, url = url)
     }
 }
 

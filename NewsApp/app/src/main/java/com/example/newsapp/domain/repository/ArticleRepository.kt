@@ -5,5 +5,5 @@ import com.example.newsapp.domain.model.ArticleDetail
 
 interface ArticleRepository {
     suspend fun getArticles(): List<Article>
-    suspend fun getArticlesDetail(coinId: String): ArticleDetail
+    //suspend fun getArticlesDetail(coinId: String): ArticleDetail
 }
