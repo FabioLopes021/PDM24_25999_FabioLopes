@@ -6,6 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 object RetrofitInstance {
     val api: NewYorkTimesApi by lazy {
@@ -22,12 +23,9 @@ interface NewYorkTimesApi {
     @GET("topstories/v2/arts.json?api-key=6SV4QcALEfHDDToNDY3ADiBnMFdmabJ3")
     suspend fun getArticls(): ApiArticlesResponseDto
 
-    @GET("search/v2/articlesearch.json?fq=web_url:({\"url\"})&api-key=6SV4QcALEfHDDToNDY3ADiBnMFdmabJ3")
-    suspend fun getArticleDetail(@Path("url") webUrl: String): ApiArticleDetailsResponseDto
-
-//  search/v2/articlesearch.json?fq=web_url:("{url}")&api-key=6SV4QcALEfHDDToNDY3ADiBnMFdmabJ3
-    // No final o link tem que ficar assim -> vai faltar acrescentar  ""
-//    @GET("v1/coins/{id}")
-//    suspend fun getCoinDetail(@Path("id") coinId: String): CoinDetailDto
-
+    @GET("search/v2/articlesearch.json?")
+    suspend fun getArticleDetails(
+        @Query("fq") fq: String,
+        @Query("api-key") apiKey: String = "6SV4QcALEfHDDToNDY3ADiBnMFdmabJ3"
+    ): ApiArticleDetailsResponseDto
 }

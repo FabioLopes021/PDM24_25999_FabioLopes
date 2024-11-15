@@ -25,7 +25,7 @@ class ArticleDetailsViewModel: ViewModel(){
             try {
                 articleDetails.value = getArticleDetailsUseCase(webUrl)
             }catch (e: Exception){
-                Log.e("CoinListViewModel", "Erro ao buscar moedas: ${e.message}")
+                Log.e("CoinListViewModel", "Erro ao pedir detalhes: ${e.message}")
                 articleDetails.value = null
             }
         }
