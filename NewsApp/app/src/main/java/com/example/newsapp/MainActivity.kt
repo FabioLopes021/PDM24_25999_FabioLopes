@@ -34,8 +34,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.newsapp.presentation.news_list.ArticleListViewModel
 import com.example.newsapp.ui.theme.NewsAppTheme
 import androidx.lifecycle.ViewModel
@@ -49,13 +51,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NewsAppTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    Greeting(
-//                        name = "Android",
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-//                }
-                MainScreen()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    MainScreen(modifier = Modifier.padding(innerPadding))
+                }
             }
         }
     }
@@ -63,25 +61,34 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MainScreen( ) {
+fun MainScreen(modifier: Modifier = Modifier) {
     var selectedArticleUrl by remember { mutableStateOf<String?>(null) }
 
     if (selectedArticleUrl == null){
         val articlesListViewModel: ArticleListViewModel = viewModel()
-        ArticleListScreen(articlesListViewModel){ articleUrl ->
+        ArticleListScreen(modifier, articlesListViewModel){ articleUrl ->
             selectedArticleUrl = articleUrl
         }
     }else{
         val articleDetailViewModel: ArticleDetailsViewModel = viewModel()
-        ArticleDetailScreen(articleDetailViewModel, selectedArticleUrl!!){
+        ArticleDetailScreen(modifier,articleDetailViewModel, selectedArticleUrl!!){
             selectedArticleUrl = null
         }
     }
 }
 
+@Composable
+fun ScreenConstaint(){
+    ConstraintLayout(){
+        
+    }
+}
+
+
 
 @Composable
 fun ArticleDetailScreen(
+    modifier: Modifier = Modifier,
     viewModel: ArticleDetailsViewModel,
     articleUrl: String,
     onBackPressed: () -> Unit
@@ -139,6 +146,7 @@ fun ArticleDetailScreen(
 
 @Composable
 fun ArticleListScreen(
+    modifier: Modifier = Modifier,
     viewModel: ArticleListViewModel = viewModel(),
     onArticleSelected: (String) -> Unit
 ) {
@@ -152,7 +160,7 @@ fun ArticleListScreen(
     val articlesList = viewModel.articles.collectAsState()
 
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)

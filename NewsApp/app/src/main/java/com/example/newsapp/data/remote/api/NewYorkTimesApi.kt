@@ -20,8 +20,10 @@ object RetrofitInstance {
 
 
 interface NewYorkTimesApi {
-    @GET("topstories/v2/arts.json?api-key=6SV4QcALEfHDDToNDY3ADiBnMFdmabJ3")
-    suspend fun getArticls(): ApiArticlesResponseDto
+    @GET("topstories/v2/arts.json")
+    suspend fun getArticls(
+        @Query("api-key") apiKey: String = "6SV4QcALEfHDDToNDY3ADiBnMFdmabJ3"
+    ): ApiArticlesResponseDto
 
     @GET("search/v2/articlesearch.json?")
     suspend fun getArticleDetails(
