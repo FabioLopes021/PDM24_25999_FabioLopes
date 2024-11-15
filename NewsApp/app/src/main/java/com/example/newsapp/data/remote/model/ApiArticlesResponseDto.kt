@@ -1,10 +1,9 @@
 package com.example.newsapp.data.remote.model
 
 
-import com.example.newsapp.domain.model.Article
 import com.google.gson.annotations.SerializedName
 
-data class ApiResponseDto(
+data class ApiArticlesResponseDto(
     @SerializedName("copyright")
     val copyright: String,
     @SerializedName("last_updated")

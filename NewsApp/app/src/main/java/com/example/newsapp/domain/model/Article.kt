@@ -6,8 +6,4 @@ data class Article (
     val subsection: String,
     val title: String,
     val url: String
-){
-    fun toArticle(): Article {
-        return Article(abstract = abstract, section = section, subsection = subsection, title = title, url = url)
-    }
-}
+)

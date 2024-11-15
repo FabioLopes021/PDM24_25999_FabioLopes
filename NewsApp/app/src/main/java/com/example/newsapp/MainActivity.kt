@@ -1,6 +1,7 @@
 package com.example.newsapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,8 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +41,7 @@ import com.example.newsapp.ui.theme.NewsAppTheme
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.newsapp.domain.model.Article
+import com.example.newsapp.presentation.news_list.ArticleDetailsViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,16 +64,85 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen( ) {
-    val articlesListViewModel: ArticleListViewModel = viewModel()
-    CoinListScreen(articlesListViewModel)
+    var selectedArticleUrl by remember { mutableStateOf<String?>(null) }
+
+    if (selectedArticleUrl == null){
+        val articlesListViewModel: ArticleListViewModel = viewModel()
+        ArticleListScreen(articlesListViewModel){ articleUrl ->
+            selectedArticleUrl = articleUrl
+        }
+    }else{
+        val articleDetailViewModel: ArticleDetailsViewModel = viewModel()
+        ArticleDetailScreen(articleDetailViewModel, selectedArticleUrl!!){
+            selectedArticleUrl = null
+        }
+    }
 }
 
 
+@Composable
+fun ArticleDetailScreen(
+    viewModel: ArticleDetailsViewModel,
+    articleUrl: String,
+    onBackPressed: () -> Unit
+) {
+    // Chama fetchCoinDetail uma vez quando a CoinDetailScreen é composta
+    LaunchedEffect(articleUrl) {
+        viewModel.fetchArticleDetails(articleUrl)  // Chama o método para buscar os detalhes da moeda
+    }
+
+    // Observa o estado do CoinDetail
+    val articleDetail = viewModel.articleDetails.collectAsState().value
+
+    // Verifica se os dados estão carregados
+    if (articleDetail == null) {
+        // Mostra um loading enquanto os dados não são carregados
+        CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+    } else {
+        // Exibe os detalhes da moeda
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = articleDetail.snippet,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Text(
+                text = "Description:",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Gray
+            )
+            Text(
+                text = articleDetail.leadParagraph,
+                fontSize = 16.sp,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Botão de voltar
+            Button(
+                onClick = onBackPressed,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text("Back")
+            }
+        }
+    }
+}
+
 
 @Composable
-fun CoinListScreen(
-    viewModel: ArticleListViewModel = viewModel()
+fun ArticleListScreen(
+    viewModel: ArticleListViewModel = viewModel(),
+    onArticleSelected: (String) -> Unit
 ) {
+
     // Chama fetchCoins uma vez quando a CoinListScreen é composta
     LaunchedEffect(Unit) {
         viewModel.fetchArticles()
@@ -85,17 +158,18 @@ fun CoinListScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(articlesList.value) { article ->
-            ArticleItem(article = article)
+            ArticleItem(article = article, onArticleSelected = onArticleSelected)
         }
     }
 }
 
 
 @Composable
-fun ArticleItem(article: Article) {
+fun ArticleItem(article: Article, onArticleSelected: (String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onArticleSelected(article.url) }
             .padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.Cyan
@@ -130,6 +204,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
+
 
 @Preview(showBackground = true)
 @Composable
