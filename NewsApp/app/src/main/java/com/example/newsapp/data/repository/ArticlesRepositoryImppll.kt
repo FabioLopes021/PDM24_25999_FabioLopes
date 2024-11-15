@@ -13,8 +13,8 @@ class ArticlesRepositoryImppll(private val api: NewYorkTimesApi) : ArticleReposi
     }
 
     override suspend fun getArticleDetail(webUrl: String): ArticleDetail {
-        val web = "articlesearch.json?fq=web_url:(\"${webUrl}\")&api-key=6SV4QcALEfHDDToNDY3ADiBnMFdmabJ3"
-        Log.d("CoinListViewModel", "URL gerada em articles repository: ${web}")
-        return api.getArticleDetails(webUrl).response.docs[0].toArticleDetail()
+        val fqUrl = "web_url:(\"" + webUrl + "\")"
+        Log.d("CoinListViewModel", "${fqUrl}")
+        return api.getArticleDetails(fqUrl).response.docs[0].toArticleDetail()
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,6 +45,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.newsapp.domain.model.Article
 import com.example.newsapp.presentation.news_list.ArticleDetailsViewModel
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,12 +79,12 @@ fun MainScreen(modifier: Modifier = Modifier) {
     }
 }
 
-@Composable
-fun ScreenConstaint(){
-    ConstraintLayout(){
-        
-    }
-}
+//@Composable
+//fun ScreenConstaint(){
+//    ConstraintLayout(){
+//
+//    }
+//}
 
 
 
@@ -95,6 +97,7 @@ fun ArticleDetailScreen(
 ) {
     // Chama fetchCoinDetail uma vez quando a CoinDetailScreen é composta
     LaunchedEffect(articleUrl) {
+        Log.d("CoinListViewModel", "Passou no LaunchedEffect")
         viewModel.fetchArticleDetails(articleUrl)  // Chama o método para buscar os detalhes da moeda
     }
 
@@ -103,12 +106,28 @@ fun ArticleDetailScreen(
 
     // Verifica se os dados estão carregados
     if (articleDetail == null) {
-        // Mostra um loading enquanto os dados não são carregados
-        CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+        Column (modifier = modifier
+            .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround
+        ){
+
+            CircularProgressIndicator(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f)
+            )
+            Button(
+                onClick = onBackPressed,
+                //modifier = Modifier.align()
+            ) {
+                Text("Back")
+            }
+        }
+
     } else {
         // Exibe os detalhes da moeda
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -158,6 +177,9 @@ fun ArticleListScreen(
 
     // Observa a lista de moedas do ViewModel
     val articlesList = viewModel.articles.collectAsState()
+
+
+
 
     LazyColumn(
         modifier = modifier

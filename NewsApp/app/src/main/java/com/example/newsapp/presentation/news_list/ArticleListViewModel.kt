@@ -1,5 +1,6 @@
 package com.example.newsapp.presentation.news_list
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,6 +24,7 @@ class ArticleListViewModel: ViewModel() {
                 articles.value = getArticlesUseCase()
             }catch (e: Exception){
                 articles.value = emptyList()
+                Log.e("CoinListViewModel", "Erro ao pedir detalhes: ${e.message}")
             }
         }
     }
