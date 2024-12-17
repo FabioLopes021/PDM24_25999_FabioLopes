@@ -8,7 +8,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+//import androidx.compose.foundation.layout.FlowRowScopeInstance.align
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,8 +23,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -97,7 +104,6 @@ fun ArticleDetailScreen(
 ) {
     // Chama fetchCoinDetail uma vez quando a CoinDetailScreen é composta
     LaunchedEffect(articleUrl) {
-        Log.d("CoinListViewModel", "Passou no LaunchedEffect")
         viewModel.fetchArticleDetails(articleUrl)  // Chama o método para buscar os detalhes da moeda
     }
 
@@ -163,6 +169,7 @@ fun ArticleDetailScreen(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArticleListScreen(
     modifier: Modifier = Modifier,
@@ -178,17 +185,37 @@ fun ArticleListScreen(
     // Observa a lista de moedas do ViewModel
     val articlesList = viewModel.articles.collectAsState()
 
+    Column (modifier = modifier){
+        TopAppBar(
+            modifier = Modifier
+                .weight(0.05f)
+                .fillMaxSize()
+            ,
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            title = {
+                Box(modifier = Modifier
+                    .fillMaxSize(),
+                    contentAlignment = Alignment.TopCenter
+                ){
+                    Text("Centered Top Bar", modifier = Modifier.align(Alignment.TopCenter))
+                }
+                //Text("Centered Top Bar", modifier = Modifier.align())
+            }
+        )
 
-
-
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(articlesList.value) { article ->
-            ArticleItem(article = article, onArticleSelected = onArticleSelected)
+        LazyColumn(
+            modifier = Modifier
+                .weight(0.95f)
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(articlesList.value) { article ->
+                ArticleItem(article = article, onArticleSelected = onArticleSelected)
+            }
         }
     }
 }

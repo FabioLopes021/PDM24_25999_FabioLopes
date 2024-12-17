@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "225468057634",
+    "project_id": "pfm-login",
+    "storage_bucket": "pfm-login.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:225468057634:android:a237b667b68668e3a2e27b",
+        "android_client_info": {
+          "package_name": "com.example.login"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfG6cduRiOldL8pg9behxcfuohkMAfJTg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
