@@ -18,6 +18,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +47,7 @@ class MainActivity : ComponentActivity() {
 //
 //                }
                 Login()
+                //Register();
             }
         }
     }
@@ -92,33 +97,68 @@ class MainActivity : ComponentActivity() {
             }
     }
 
-}
+    @Composable
+    fun Register() {
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
 
+        Column(Modifier
+            .fillMaxSize()
+            .background(color = Color.LightGray),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "Welcome", fontSize = 20.sp)
+            Spacer(modifier = Modifier.height(24.dp))
+            TextField(value = email, label = { Text("Email") }, onValueChange = {email = it})
+            Spacer(modifier = Modifier.height(16.dp))
+            TextField(value = password, label = { Text("Password") }, onValueChange = {password = it})
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = { RegisterUserWithFirebase(email,password)}){
+                Text("Register")
+            }
+            Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),onClick = { }){
+                Text("Back")
+            }
+        }
+    }
 
+    @Composable
+    fun Login() {
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
 
-
-
-
-
-@Composable
-fun Login() {
-    Column(Modifier
-        .fillMaxSize()
-        .background(color = Color.LightGray),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Welcome", fontSize = 20.sp)
-        Spacer(modifier = Modifier.height(24.dp))
-        TextField(value = "", label = { Text("Email") }, onValueChange = {})
-        Spacer(modifier = Modifier.height(16.dp))
-        TextField(value = "", label = { Text("Password") }, onValueChange = {})
-        Spacer(modifier = Modifier.height(24.dp))
-        Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = {}){
-            Text("Login")
+        Column(Modifier
+            .fillMaxSize()
+            .background(color = Color.LightGray),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "Welcome", fontSize = 20.sp)
+            Spacer(modifier = Modifier.height(24.dp))
+            TextField(value = email, label = { Text("Email") }, onValueChange = {email = it})
+            Spacer(modifier = Modifier.height(16.dp))
+            TextField(value = password, label = { Text("Password") }, onValueChange = {password = it})
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = {loginUserWithFirebase(email,password)}){
+                Text("Login")
+            }
+            Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),onClick = { }){
+                Text("Register")
+            }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
