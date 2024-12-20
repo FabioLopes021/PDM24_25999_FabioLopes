@@ -60,7 +60,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreenTeste( ) {
-    var selectedCoinId by remember { mutableStateOf<String?>(null) }
     val navController = rememberNavController();
     SetupNavGraph(navController)
 
