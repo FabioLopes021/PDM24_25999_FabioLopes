@@ -36,9 +36,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.example.projetoexemplo.domain.model.Coin
 import com.example.projetoexemplo.presentation.coin_list.CoinDetailViewModel
 import com.example.projetoexemplo.presentation.coin_list.CoinListViewModel
+import com.example.projetoexemplo.presentation.sreens.CoinDetailScreen
+import com.example.projetoexemplo.presentation.sreens.CoinListScreen
 import com.example.projetoexemplo.ui.theme.ProjetoExemploTheme
 
 
@@ -49,147 +52,43 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ProjetoExemploTheme {
-                MainScreen()
+                MainScreenTeste()
             }
         }
     }
 }
 
-
-
 @Composable
-fun MainScreen( ) {
+fun MainScreenTeste( ) {
     var selectedCoinId by remember { mutableStateOf<String?>(null) }
+    val navController = rememberNavController();
+    SetupNavGraph(navController)
 
-    if (selectedCoinId == null) {
-        val coinListViewModel: CoinListViewModel = viewModel()
-        CoinListScreen(coinListViewModel) { coinId ->
-            selectedCoinId = coinId
-        }
-    } else {
-        val coinDetailViewModel: CoinDetailViewModel = viewModel()
-        CoinDetailScreen(coinDetailViewModel, selectedCoinId!!) {
-            selectedCoinId = null
-        }
-    }
+
 }
 
 
-@Composable
-fun CoinDetailScreen(
-    viewModel: CoinDetailViewModel,
-    coinId: String,
-    onBackPressed: () -> Unit
-) {
-    // Chama fetchCoinDetail uma vez quando a CoinDetailScreen é composta
-    LaunchedEffect(coinId) {
-        Log.d("CoinDetailScreen", "Fetching details for coin: $coinId")
-        viewModel.fetchCoinDetail(coinId)  // Chama o método para buscar os detalhes da moeda
-    }
-
-    // Observa o estado do CoinDetail
-    val coinDetail = viewModel.coinDetail.collectAsState().value
-
-    // Verifica se os dados estão carregados
-    if (coinDetail == null) {
-        // Mostra um loading enquanto os dados não são carregados
-        CircularProgressIndicator(modifier = Modifier.fillMaxSize())
-    } else {
-        // Exibe os detalhes da moeda
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = coinDetail.name,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-            Text(
-                text = "Description:",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Gray
-            )
-            Text(
-                text = coinDetail.description,
-                fontSize = 16.sp,
-                color = Color.Black
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Botão de voltar
-            Button(
-                onClick = onBackPressed,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Text("Back")
-            }
-        }
-    }
-}
-
-@Composable
-fun CoinListScreen(
-    viewModel: CoinListViewModel = viewModel(),
-    onCoinSelected: (String) -> Unit
-) {
-    // Chama fetchCoins uma vez quando a CoinListScreen é composta
-    LaunchedEffect(Unit) {
-        viewModel.fetchCoins()
-    }
-
-    // Observa a lista de moedas do ViewModel
-    val coinList = viewModel.coins.collectAsState()
+//@Composable
+//fun MainScreen( ) {
+//    var selectedCoinId by remember { mutableStateOf<String?>(null) }
+//
+//    if (selectedCoinId == null) {
+//        val coinListViewModel: CoinListViewModel = viewModel()
+//        CoinListScreen(coinListViewModel) { coinId ->
+//            selectedCoinId = coinId
+//        }
+//    } else {
+//        val coinDetailViewModel: CoinDetailViewModel = viewModel()
+//        CoinDetailScreen(coinDetailViewModel, selectedCoinId!!) {
+//            selectedCoinId = null
+//        }
+//    }
+//}
 
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(coinList.value) { coin ->
-            CoinItem(coin = coin, onCoinSelected = onCoinSelected)
-        }
-    }
-}
 
 
-@Composable
-fun CoinItem(coin: Coin, onCoinSelected: (String) -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onCoinSelected(coin.id) }
-            .padding(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Cyan
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = coin.name,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Symbol: ${coin.symbol}",
-                fontSize = 16.sp,
-                color = Color.DarkGray
-            )
-        }
-    }
-}
+
 
 
 
