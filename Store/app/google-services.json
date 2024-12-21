@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "735838689812",
+    "project_id": "store-adcad",
+    "storage_bucket": "store-adcad.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735838689812:android:06a731a9b12c102e7ce501",
+        "android_client_info": {
+          "package_name": "com.example.store"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1_PgbyYRfNEP_Pb2SX0IfRHvnl6Wycs4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
