@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun Home(navController: NavHostController, homeViewModel: HomeViewModel) {
+fun Home(navController: NavHostController,homeViewModel: HomeViewModel) {
 
     //val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
@@ -42,6 +42,7 @@ fun Home(navController: NavHostController, homeViewModel: HomeViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Text(text = "Home Page")
+            //Text(text = email)
             Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = {
                 coroutineScope.launch {
                     try {
