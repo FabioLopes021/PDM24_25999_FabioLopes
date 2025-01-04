@@ -3,6 +3,7 @@ package com.example.store.utils
 import android.content.Context
 import android.widget.Toast.LENGTH_LONG
 import android.widget.Toast.makeText
+import com.example.store.domain.model.Produto
 
 sealed class AuthState{
     object Authenticated: AuthState()
@@ -22,3 +23,4 @@ fun showToastMessage(
     context: Context,
     message: String
 ) = makeText(context, "${message}", LENGTH_LONG).show()
+
