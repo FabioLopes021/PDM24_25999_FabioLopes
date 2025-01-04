@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "154749799494",
+    "project_id": "teste-firebase-room",
+    "storage_bucket": "teste-firebase-room.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:154749799494:android:44e75d1df6180c6995ce47",
+        "android_client_info": {
+          "package_name": "com.example.firebase_room"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCa3r6VATqEH7Z6bVhmX8xtVL7xQJOilGc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

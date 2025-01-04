@@ -5,16 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModel
-import com.example.store.presentation.navigation.SetupNavGraph
-import com.example.store.presentation.viewModels.AuthViewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.store.navigation.SetupNavGraph
+import com.example.store.ui.presentation.SplashScreen.SplashViewModel
 import com.example.store.ui.theme.StoreTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,8 +21,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             StoreTheme {
-                val authViewModel: AuthViewModel by viewModels()
-                SetupNavGraph(authViewModel)
+//                val SpashViewModel: SplashViewModel by viewModels()
+//                val authViewModel: AuthViewModel by viewModels()
+                val navController = rememberNavController();
+                SetupNavGraph(navController)
             }
         }
     }

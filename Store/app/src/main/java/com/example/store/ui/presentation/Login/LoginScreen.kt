@@ -1,5 +1,6 @@
-package com.example.store.presentation.screens
+package com.example.store.ui.presentation.Login
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,34 +18,48 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.store.presentation.navigation.Screen
-import com.example.store.presentation.viewModels.AuthState
+import com.example.store.domain.model.User
+import com.example.store.navigation.Screen
+//import com.example.store.presentation.viewModels.AuthState
 import com.example.store.presentation.viewModels.AuthViewModel
+import com.example.store.utils.showToastMessage
+import kotlinx.coroutines.coroutineScope
+import  com.example.store.utils.AuthState
+import kotlinx.coroutines.launch
 
 @Composable
-fun Login(navController: NavHostController, authViewModel: AuthViewModel) {
+fun Login(navController: NavHostController, loginViewModel: LoginViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    val authState = authViewModel.authState.observeAsState()
+    val coroutineScope = rememberCoroutineScope()
+
+    val authState = loginViewModel.authState.observeAsState()
     val context = LocalContext.current
+    var user by remember { mutableStateOf<User?>(null) }
 
     LaunchedEffect(authState.value) {
         when(authState.value){
-            is AuthState.Authenticated -> navController.navigate(Screen.Home)
-            is AuthState.Error -> Toast.makeText(
-                context,
-                (authState.value as AuthState.Error).message,
-                Toast.LENGTH_SHORT).show()
+            is AuthState.Authenticated ->{
+                if (user == null){
+                    Log.d("Teste", "Antes da rota home, user = null")
+                }else{
+                    Log.d("Teste", "Antes da rota home, user != null")
+                }
+
+                //navController.navigate(Route.Home(user!!.email))
+                navController.navigate(Screen.Home(user!!.email))
+            }
+            is AuthState.Error -> showToastMessage(context,(authState.value as AuthState.Error).message)
             else -> Unit
         }
     }
@@ -63,7 +78,9 @@ fun Login(navController: NavHostController, authViewModel: AuthViewModel) {
         TextField(value = password, label = { Text("Password") }, onValueChange = {password = it})
         Spacer(modifier = Modifier.height(24.dp))
         Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = {
-            authViewModel.login(email,password)
+            coroutineScope.launch {
+                user = loginViewModel.login(email,password,context)
+            }
         }){
             Text("Login")
         }
@@ -75,3 +92,5 @@ fun Login(navController: NavHostController, authViewModel: AuthViewModel) {
         }
     }
 }
+
+
