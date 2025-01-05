@@ -38,8 +38,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Login(navController: NavHostController, loginViewModel: LoginViewModel) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+//    var email by remember { mutableStateOf("") }
+//    var password by remember { mutableStateOf("") }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -73,13 +73,13 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel) {
     ) {
         Text(text = "Welcome", fontSize = 20.sp)
         Spacer(modifier = Modifier.height(24.dp))
-        TextField(value = email, label = { Text("Email") }, onValueChange = {email = it})
+        TextField(value = loginViewModel.email.value, label = { Text("Email") }, onValueChange = {loginViewModel.email.value = it})
         Spacer(modifier = Modifier.height(16.dp))
-        TextField(value = password, label = { Text("Password") }, onValueChange = {password = it})
+        TextField(value = loginViewModel.password.value, label = { Text("Password") }, onValueChange = {loginViewModel.password.value = it})
         Spacer(modifier = Modifier.height(24.dp))
         Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = {
             coroutineScope.launch {
-                user = loginViewModel.login(email,password,context)
+                user = loginViewModel.login(loginViewModel.email.value,loginViewModel.password.value,context)
             }
         }){
             Text("Login")

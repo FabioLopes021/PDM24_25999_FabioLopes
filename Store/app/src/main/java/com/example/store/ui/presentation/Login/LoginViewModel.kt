@@ -2,6 +2,10 @@ package com.example.store.ui.presentation.Login
 
 import android.content.Context
 import android.view.View
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,6 +26,9 @@ class LoginViewModel: ViewModel() {
     init {
         _authState.value = AuthState.Unauthenticated
     }
+
+    var email = mutableStateOf("")
+    var password = mutableStateOf("")
 
     suspend fun login(email: String, password: String, context: Context,): User? {
         var user: User? = null

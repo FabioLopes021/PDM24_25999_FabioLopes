@@ -43,7 +43,7 @@ fun SetupNavGraph(navController: NavHostController){
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Login
+        startDestination = Screen.SplashScreen
     ){
         composable<Screen.SplashScreen>{
             val splashViewModel: SplashViewModel = viewModel()
@@ -60,7 +60,7 @@ fun SetupNavGraph(navController: NavHostController){
         composable<Screen.Home>{backStackEntry ->
             val email = backStackEntry.toRoute<Screen.Home>()
             val homeViewModel: HomeViewModel = viewModel()
-            HomeScreen(navController = navController, homeViewModel)
+            HomeScreen(navController = navController, homeViewModel, email.email)
         }
     }
 }
