@@ -1,7 +1,6 @@
 package com.example.store.domain.use_case
 
 import com.example.store.domain.model.User
-import com.example.store.domain.model.Utilizador
 import com.example.store.domain.repository.AuthRepository
 
 class AuthUseCase(private  val repository: AuthRepository){

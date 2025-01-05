@@ -1,11 +1,7 @@
 package com.example.store.ui.presentation.Login
 
 import android.content.Context
-import android.view.View
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,7 +10,6 @@ import com.example.store.domain.model.User
 import com.example.store.domain.use_case.AuthUseCase
 import com.example.store.utils.AuthState
 import com.example.store.utils.showToastMessage
-import com.google.firebase.auth.FirebaseAuth
 
 class LoginViewModel: ViewModel() {
     private val repository = AuthRepositoryImpl()

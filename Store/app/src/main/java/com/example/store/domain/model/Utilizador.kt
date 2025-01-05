@@ -1,12 +1,11 @@
 package com.example.store.domain.model
 
 data class Utilizador(
-    var id: String,
-    var nome: String,
-    var email: String,
-    var morada: String,
-    var telemovel: Int,
-    var carrinhoId: String
+    val id: String,
+    val email: String,
+    val morada: String,
+    val nome: String,
+    val visibilidadeCarrinho: Boolean,
 ){
-    constructor() : this("","", "", "", 0,"")
+    constructor() :  this("","","","",false)
 }

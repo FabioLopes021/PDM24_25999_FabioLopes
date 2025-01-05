@@ -1,4 +1,4 @@
-package com.example.store.ui.presentation.SingUp
+package com.example.store.ui.presentation.SignUp
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -16,8 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,8 +28,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.store.navigation.Screen
 import com.example.store.presentation.viewModels.AuthState
-import com.example.store.presentation.viewModels.AuthViewModel
 import kotlinx.coroutines.launch
+import kotlin.math.sign
 
 
 @Composable
@@ -40,7 +38,6 @@ fun Register(navController: NavHostController, signUpViewModel: SignUpViewModel)
     var email by signUpViewModel.email
     var nome by signUpViewModel.nome
     var morada by signUpViewModel.morada
-    var telemovel by signUpViewModel.telemovel
 
 
 
@@ -51,7 +48,10 @@ fun Register(navController: NavHostController, signUpViewModel: SignUpViewModel)
 
     LaunchedEffect(authState.value) {
         when(authState.value){
-            is AuthState.Authenticated -> navController.navigate(Screen.Home)
+            is AuthState.Authenticated -> {
+                signUpViewModel.CriarUtilizador(email,morada, nome)
+                navController.navigate(Screen.Home(email))
+            }
             is AuthState.Error -> Toast.makeText(
                 context,
                 (authState.value as AuthState.Error).message,
@@ -69,15 +69,13 @@ fun Register(navController: NavHostController, signUpViewModel: SignUpViewModel)
     ) {
         Text(text = "Register", fontSize = 20.sp)
         Spacer(modifier = Modifier.height(24.dp))
-        TextField(value = password, label = { Text("nome") }, onValueChange = {password = it})
-        Spacer(modifier = Modifier.height(24.dp))
         TextField(value = email, label = { Text("Email") }, onValueChange = {email = it})
+        Spacer(modifier = Modifier.height(24.dp))
+        TextField(value = password, label = { Text("Password") }, onValueChange = {password = it})
         Spacer(modifier = Modifier.height(16.dp))
         TextField(value = nome, label = { Text("Nome") }, onValueChange = {nome = it})
         Spacer(modifier = Modifier.height(24.dp))
         TextField(value = morada, label = { Text("Morada") }, onValueChange = {morada = it})
-        Spacer(modifier = Modifier.height(24.dp))
-        TextField(value = telemovel, label = { Text("telemovel") }, onValueChange = {telemovel = it}, keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number))
         Spacer(modifier = Modifier.height(24.dp))
         Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = {
             coroutineScope.launch {

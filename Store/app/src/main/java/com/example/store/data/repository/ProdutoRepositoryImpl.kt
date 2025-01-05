@@ -37,16 +37,15 @@ class ProdutoRepositoryImpl: ProdutoRepository {
         val listenerRegistration = db.collection("Produtos")
             .addSnapshotListener { querySnapshot, error ->
                 if (error != null) {
-                    close(error) // Fecha o fluxo com um erro
+                    close(error)
                     return@addSnapshotListener
                 }
-
                 if (querySnapshot != null) {
                     val produtos = querySnapshot.documents.mapNotNull { it.toObject(Produto::class.java) }
-                    trySend(produtos) // Envia os dados atualizados para o fluxo
+                    trySend(produtos)
                 }
             }
-        awaitClose { listenerRegistration.remove() } // Remove o listener ao fechar o fluxo
+        awaitClose { listenerRegistration.remove() }
     }
 
     override fun getProducts() = db.collection("Produtos").snapshots().map {Snapshot ->
@@ -56,4 +55,34 @@ class ProdutoRepositoryImpl: ProdutoRepository {
             produto?.copy(id = document.id)
         }.filterNotNull()
     }
+
+    fun getProdutoByIdFlow(produtoId: String): Flow<Produto> = callbackFlow {
+        val documentRef = db.collection("Produtos").document(produtoId)
+        val listener = documentRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+            snapshot?.toObject(Produto::class.java)?.let { produto ->
+                trySend(produto).isSuccess
+            }
+        }
+        awaitClose { listener.remove() }
+    }
+
+
+
+    suspend fun getProdutoById(produtoId: String): Produto? {
+        return try {
+            val document = db.collection("Produtos")
+                .document(produtoId)
+                .get()
+                .await()
+
+            document.toObject(Produto::class.java)?.copy(id = document.id)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
 }

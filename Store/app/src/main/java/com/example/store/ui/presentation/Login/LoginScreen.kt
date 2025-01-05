@@ -1,7 +1,6 @@
 package com.example.store.ui.presentation.Login
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,9 +29,7 @@ import androidx.navigation.NavHostController
 import com.example.store.domain.model.User
 import com.example.store.navigation.Screen
 //import com.example.store.presentation.viewModels.AuthState
-import com.example.store.presentation.viewModels.AuthViewModel
 import com.example.store.utils.showToastMessage
-import kotlinx.coroutines.coroutineScope
 import  com.example.store.utils.AuthState
 import kotlinx.coroutines.launch
 

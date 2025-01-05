@@ -1,21 +1,21 @@
 package com.example.store.navigation
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.store.ui.presentation.Carrinho.CarrinhoScreen
 import com.example.store.ui.presentation.Home.HomeScreen
 import com.example.store.ui.presentation.Home.HomeViewModel
 import kotlinx.serialization.Serializable
 import com.example.store.ui.presentation.Login.Login
 import com.example.store.ui.presentation.Login.LoginViewModel
-import com.example.store.ui.presentation.SingUp.Register
-import com.example.store.ui.presentation.SingUp.SignUpViewModel
+import com.example.store.ui.presentation.SignUp.Register
+import com.example.store.ui.presentation.SignUp.SignUpViewModel
 import com.example.store.ui.presentation.SplashScreen.SplashScreen
 import com.example.store.ui.presentation.SplashScreen.SplashViewModel
 
@@ -34,12 +34,18 @@ sealed class Screen{
     data object Signup: Screen()
     @Serializable
     data object SplashScreen: Screen()
+    @Serializable
+    data class CarrinhoUser(
+        val email: String?
+    ): Screen()
 }
 
 
 @SuppressLint("RestrictedApi")
 @Composable
 fun SetupNavGraph(navController: NavHostController){
+
+    val homeViewModel: HomeViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -59,8 +65,12 @@ fun SetupNavGraph(navController: NavHostController){
         }
         composable<Screen.Home>{backStackEntry ->
             val email = backStackEntry.toRoute<Screen.Home>()
-            val homeViewModel: HomeViewModel = viewModel()
+            Log.d("Email", "Email no navGraph${email.email}")
             HomeScreen(navController = navController, homeViewModel, email.email)
+        }
+        composable<Screen.CarrinhoUser>{backStackEntry ->
+            val email = backStackEntry.toRoute<Screen.CarrinhoUser>()
+            CarrinhoScreen(navController = navController, homeViewModel, email.email)
         }
     }
 }

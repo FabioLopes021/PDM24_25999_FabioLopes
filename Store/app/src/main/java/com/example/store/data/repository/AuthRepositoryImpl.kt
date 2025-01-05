@@ -1,7 +1,6 @@
 package com.example.store.data.repository
 
 import com.example.store.data.remote.api.AuthService
-import com.example.store.data.remote.model.UserEntity
 import com.example.store.domain.model.User
 import com.example.store.domain.repository.AuthRepository
 
