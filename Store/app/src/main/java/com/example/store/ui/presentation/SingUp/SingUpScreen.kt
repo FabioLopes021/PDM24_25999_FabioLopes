@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -23,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -34,8 +36,14 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Register(navController: NavHostController, signUpViewModel: SignUpViewModel) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var password by signUpViewModel.password
+    var email by signUpViewModel.email
+    var nome by signUpViewModel.nome
+    var morada by signUpViewModel.morada
+    var telemovel by signUpViewModel.telemovel
+
+
+
 
     val coroutineScope = rememberCoroutineScope()
     val authState = signUpViewModel.authState.observeAsState()
@@ -61,13 +69,19 @@ fun Register(navController: NavHostController, signUpViewModel: SignUpViewModel)
     ) {
         Text(text = "Register", fontSize = 20.sp)
         Spacer(modifier = Modifier.height(24.dp))
+        TextField(value = password, label = { Text("nome") }, onValueChange = {password = it})
+        Spacer(modifier = Modifier.height(24.dp))
         TextField(value = email, label = { Text("Email") }, onValueChange = {email = it})
         Spacer(modifier = Modifier.height(16.dp))
-        TextField(value = password, label = { Text("Password") }, onValueChange = {password = it})
+        TextField(value = nome, label = { Text("Nome") }, onValueChange = {nome = it})
+        Spacer(modifier = Modifier.height(24.dp))
+        TextField(value = morada, label = { Text("Morada") }, onValueChange = {morada = it})
+        Spacer(modifier = Modifier.height(24.dp))
+        TextField(value = telemovel, label = { Text("telemovel") }, onValueChange = {telemovel = it}, keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number))
         Spacer(modifier = Modifier.height(24.dp))
         Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = {
             coroutineScope.launch {
-                signUpViewModel.register(email,password, context)
+                signUpViewModel.register(email,password,context)
             }
 
         }){

@@ -19,8 +19,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.Util
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.example.store.domain.model.Produto
 import com.example.store.domain.model.Utilizador
 import com.example.store.navigation.Screen
@@ -51,122 +57,178 @@ import kotlinx.coroutines.launch
 
 
 
+//@Composable
+//fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel, email:String?) {
+//    val produtos by homeViewModel.produtos.collectAsState()
+//    val context = LocalContext.current
+//    val coroutineScope = rememberCoroutineScope()
+//    var utilizador = remember { mutableStateOf<Utilizador?>(null) }
+//
+//
+//    LaunchedEffect(Unit) {
+//        if(email != null)
+//            utilizador.value = homeViewModel.fetchUtilizador(email)
+//    }
+//
+//    Scaffold { innerpadding ->
+//        Column (modifier = Modifier
+//            .padding(innerpadding)
+//            .fillMaxSize(),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ){
+//            if(utilizador.value != null)
+//                Text(text = "testes ${utilizador!!.value!!.nome}")
+//            Text(text = "Home Page")
+//            LazyColumn {
+//                items(produtos) { produto ->
+//                    Text(text = "Nome: ${produto.nome}")
+//                }
+//            }
+//            //Text(text = email)
+//            Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = {
+//                coroutineScope.launch {
+//                    try {
+//                        homeViewModel.logout()
+//                        navController.navigate(Screen.Login)
+//                    }catch (e: Exception){
+//                        Log.d("Teste", "teste")
+//                    }
+//                }
+//            }){
+//                Text("Signout")
+//            }
+//        }
+//    }
+//}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel, email:String?) {
-    val produtos by homeViewModel.produtos.collectAsState()
+fun HomeScreen(
+    navController: NavHostController,
+    homeViewModel: HomeViewModel,
+    email: String?
+) {
+    val produtos by homeViewModel.produtos.collectAsState(emptyList()) // Coleta a lista de produtos
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var utilizador = remember { mutableStateOf<Utilizador?>(null) }
+    val utilizador = remember { mutableStateOf<Utilizador?>(null) }
 
-
+    // Carregar o utilizador quando a tela for exibida
     LaunchedEffect(Unit) {
-        if(email != null)
-            utilizador.value = homeViewModel.fetchUtilizador(email)
+        email?.let {
+            utilizador.value = homeViewModel.fetchUtilizador(it)
+        }
     }
 
-    Scaffold { innerpadding ->
-        Column (modifier = Modifier
-            .padding(innerpadding)
-            .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = utilizador.value?.nome?.let { "Bem-vindo, $it!" } ?: "Home Page",
+                        style = MaterialTheme.typography.titleLarge // Substituto para h6 no Material 3
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Cyan, // Cor de fundo
+                    titleContentColor = Color.White // Cor do texto do título
+                )
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            if(utilizador.value != null)
-                Text(text = "testes ${utilizador!!.value!!.nome}")
-            Text(text = "Home Page")
+        ) {
+            // Lista de produtos
+//            LazyColumn(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .weight(1f) // Atribui peso para ocupar o espaço disponível
+//                    .padding(horizontal = 16.dp)
+//            ) {
+//                items(produtos) { produto ->
+//                    ProductItem(produto)
+//                }
+//            }
             LazyColumn {
                 items(produtos) { produto ->
-                    Text(text = "Nome: ${produto.nome}")
-                }
-            }
-            //Text(text = email)
-            Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = {
-                coroutineScope.launch {
-                    try {
-                        homeViewModel.logout()
-                        navController.navigate(Screen.Login)
-                    }catch (e: Exception){
-                        Log.d("Teste", "teste")
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        // Exibe a imagem do produto
+                        Image(
+                            painter = rememberAsyncImagePainter(produto.foto),
+                            contentDescription = "Foto do Produto",
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)),
+                            contentScale = ContentScale.Crop
+                        )
+
+                        // Exibe o nome do produto
+                        Text(
+                            text = produto.nome,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.weight(1f)
+                        )
                     }
                 }
-            }){
-                Text("Signout")
+            }
+
+            // Botão de logout
+            Button(
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+                onClick = {
+                    coroutineScope.launch {
+                        try {
+                            homeViewModel.logout()
+                            navController.navigate(Screen.Login) {
+                                popUpTo(0) // Remove todas as telas anteriores
+                            }
+                        } catch (e: Exception) {
+                            Log.e("HomeScreen", "Erro ao fazer logout: ${e.message}")
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text("Signout", color = Color.White)
             }
         }
     }
 }
 
-
 @Composable
-fun UserProductsScreen(
-    userName: String, // Nome do usuário
-    produtos: List<Produto>, // Lista de produtos
-    onProductClick: (Produto) -> Unit // Ação ao clicar em um produto
-) {
-    Column(
+fun ProductItem(produto: Produto) {
+    ElevatedCard(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        // Cabeçalho com o nome do usuário
-        Text(
-            text = "Bem-vindo, $userName!",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            textAlign = TextAlign.Center,
-            color = Color.Black
-        )
-
-        // Lista de produtos
-        LazyColumn(
-            modifier = Modifier.run {
-                fillMaxSize()
-                        .padding(8.dp)
-            }
-        ) {
-            items(produtos) { produto ->
-                ProductItem(produto = produto, onClick = { onProductClick(produto) })
-            }
-        }
-    }
-}
-
-@Composable
-fun ProductItem(produto: Produto, onClick: () -> Unit) {
-    Card(modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .clickable(onClick = onClick), elevation = 4.dp, backgroundColor = Color.LightGray) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            .padding(vertical = 4.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
         ) {
-            // Imagem do produto (se houver)
-            produto.imageUrl?.let { imageUrl ->
-                Image(
-                    painter = rememberImagePainter(data = imageUrl),
-                    contentDescription = produto.nome,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape)
-                        .background(Color.Gray),
-                    contentScale = ContentScale.Crop
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Informações do produto
-            Column {
-                Text(text = produto.nome, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                Text(text = "Preço: R$${produto.preco}", fontSize = 14.sp, color = Color.DarkGray)
+            Text(text = "Nome: ${produto.nome}", style = MaterialTheme.typography.titleMedium)
+            Text(text = "Preço: ${produto.preco}€", style = MaterialTheme.typography.bodyMedium)
+            produto.descricao?.let {
                 Text(
-                    text = produto.descricao ?: "Sem descrição disponível",
-                    fontSize = 12.sp,
-                    color = Color.Gray,
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )

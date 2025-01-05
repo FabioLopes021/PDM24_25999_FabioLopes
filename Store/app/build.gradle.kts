@@ -82,4 +82,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }
