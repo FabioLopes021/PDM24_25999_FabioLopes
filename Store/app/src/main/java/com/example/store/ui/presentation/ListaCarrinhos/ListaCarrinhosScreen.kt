@@ -53,12 +53,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListaCarrinhosScreen(navController: NavHostController, listaCarrinhosViewModel: ListaCarrinhosViewModel){
+fun ListaCarrinhosScreen(navController: NavHostController, listaCarrinhosViewModel: ListaCarrinhosViewModel, email: String?){
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val utilizadores by listaCarrinhosViewModel.CarrinhosPartilhados.collectAsState()
 
-    var email = remember { mutableStateOf("") }
 
 
     Scaffold { innerpadding ->
@@ -72,8 +71,7 @@ fun ListaCarrinhosScreen(navController: NavHostController, listaCarrinhosViewMod
                 title = {"Carrinho Publicos"},
                 actions = {
                     IconButton(onClick = {
-//                        navController.popBackStack()
-//                        navController.navigate(Screen.Home(utilizador.value?.email))
+                        navController.navigate(Screen.Home(email))
                     }) {
                         Icon(
                             imageVector = Icons.Default.Home,
@@ -111,6 +109,7 @@ fun ListaCarrinhosScreen(navController: NavHostController, listaCarrinhosViewMod
                         IconButton(onClick = {
                             try {
                                 //Navegação para o outro
+                                navController.navigate(Screen.Carrinho(utilizador.email))
 
                             }catch (e: Exception){
                                 Log.d("Teste", "teste")

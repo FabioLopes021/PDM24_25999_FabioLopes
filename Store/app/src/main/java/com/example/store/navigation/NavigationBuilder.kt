@@ -3,11 +3,14 @@ package com.example.store.navigation
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.example.store.ui.presentation.Carrinho.CarrinhoScreen
+import com.example.store.ui.presentation.Carrinho.CarrinhoViewModel
 import com.example.store.ui.presentation.CarrinhoUtilizador.CarrinhoUtilizadorScreen
 import com.example.store.ui.presentation.Home.HomeScreen
 import com.example.store.ui.presentation.Home.HomeViewModel
@@ -39,11 +42,13 @@ sealed class Screen{
         val email: String?
     ): Screen()
     @Serializable
-    data object ListaCarrinhos: Screen()
-//    @Serializable
-//    data class Carrinho(
-//      val userId: String
-//    ): Screen()
+    data class ListaCarrinhos(
+        val email: String?
+    ): Screen()
+    @Serializable
+    data class Carrinho(
+        val email: String
+    ): Screen()
 }
 
 
@@ -78,13 +83,15 @@ fun SetupNavGraph(navController: NavHostController){
             val email = backStackEntry.toRoute<Screen.CarrinhoUtilizador>()
             CarrinhoUtilizadorScreen(navController = navController, homeViewModel, email.email)
         }
-        composable<Screen.ListaCarrinhos>{
+        composable<Screen.ListaCarrinhos>{backStackEntry ->
+            val email = backStackEntry.toRoute<Screen.ListaCarrinhos>()
             val listaCarrinhosViewModel: ListaCarrinhosViewModel = viewModel()
-            ListaCarrinhosScreen(navController = navController, listaCarrinhosViewModel)
+            ListaCarrinhosScreen(navController = navController, listaCarrinhosViewModel, email.email)
         }
-//        composable<Screen.Carrinho>{backStackEntry ->
-//            //val userId = backStackEntry.toRoute<Screen.CarrinhoUtilizador>()
-//            //CarrinhoScreen(navController = navController, homeViewModel, email.email)
-//        }
+        composable<Screen.Carrinho>{backStackEntry ->
+            val email = backStackEntry.toRoute<Screen.Carrinho>()
+            val carrinhoViewModel: CarrinhoViewModel = viewModel()
+            CarrinhoScreen(navController = navController, carrinhoViewModel, email.email)
+        }
     }
 }

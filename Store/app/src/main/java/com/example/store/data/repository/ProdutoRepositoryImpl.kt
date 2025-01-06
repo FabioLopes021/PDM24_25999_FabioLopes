@@ -1,5 +1,6 @@
 package com.example.store.data.repository
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.store.domain.model.Produto
 import com.example.store.domain.repository.ProdutoRepository
@@ -52,6 +53,7 @@ class ProdutoRepositoryImpl: ProdutoRepository {
         //Snapshot.toObjects(Produto::class.java)
         Snapshot.documents.map {document ->
             val produto = document.toObject(Produto::class.java)
+            Log.d("ProdutosCarrinho", "Produtos encontrados no repositorio produtos: $produtos")
             produto?.copy(id = document.id)
         }.filterNotNull()
     }
@@ -69,8 +71,6 @@ class ProdutoRepositoryImpl: ProdutoRepository {
         }
         awaitClose { listener.remove() }
     }
-
-
 
     suspend fun getProdutoById(produtoId: String): Produto? {
         return try {

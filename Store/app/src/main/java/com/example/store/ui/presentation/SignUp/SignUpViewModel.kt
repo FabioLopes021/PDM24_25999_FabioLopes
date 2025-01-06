@@ -11,7 +11,7 @@ import com.example.store.domain.model.User
 import com.example.store.domain.model.Utilizador
 import com.example.store.domain.use_case.AuthUseCase
 import com.example.store.domain.use_case.UtilizadorUseCase
-import com.example.store.presentation.viewModels.AuthState
+import com.example.store.utils.AuthState
 import com.example.store.utils.showToastMessage
 
 class SignUpViewModel: ViewModel() {

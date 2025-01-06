@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.store.navigation.Screen
-import com.example.store.presentation.viewModels.AuthState
+import com.example.store.utils.AuthState
 import kotlinx.coroutines.launch
 import kotlin.math.sign
 

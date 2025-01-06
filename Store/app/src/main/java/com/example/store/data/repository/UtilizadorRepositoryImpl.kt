@@ -54,6 +54,7 @@ class UtilizadorRepositoryImpl {
         try {
             utilizadoresRef.add(utilizador)
                 .await()
+
             return true
         } catch (e: Exception) {
             Log.e("Firestore", "Erro ao adicionar utilizador", e)

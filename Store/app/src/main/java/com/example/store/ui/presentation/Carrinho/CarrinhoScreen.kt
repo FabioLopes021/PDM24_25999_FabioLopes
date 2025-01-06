@@ -1,4 +1,4 @@
-package com.example.store.ui.presentation.CarrinhoUtilizador
+package com.example.store.ui.presentation.Carrinho
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -51,40 +52,39 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CarrinhoUtilizadorScreen(navController: NavHostController, homeViewModel: HomeViewModel, email: String?) {
+fun CarrinhoScreen(navController: NavHostController, carrinhoViewModel: CarrinhoViewModel, email:String?) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val carrinho by homeViewModel.produtosCarrinho2.collectAsState()
+    val carrinho by carrinhoViewModel.produtosCarrinho.collectAsState()
 
     var utilizador = remember { mutableStateOf<Utilizador?>(null) }
 
     LaunchedEffect(email) {
         email?.let{
-            Log.d("Produtos Carrinho","Passou aqui")
-            utilizador.value = homeViewModel.fetchUtilizador(email)
-            Log.d("Produtos Carrinho", "${utilizador.value!!.nome}")
-            if(utilizador.value != null)
-                //homeViewModel.observeDetalhesCarrinho(utilizador.value!!.id)
-                homeViewModel.observeCarrinho(utilizador.value!!.id)
+            if(email != null)
+                utilizador.value = carrinhoViewModel.fetchUtilizador(email)
+            if(utilizador.value?.id != null)
+                carrinhoViewModel.observeCarrinho(utilizador.value?.id!!)
         }
     }
 
     Scaffold { innerpadding ->
-        Column (modifier = Modifier
-            .fillMaxSize(),
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             TopAppBar(
-                modifier =  Modifier.padding(innerpadding),
-                title = {"Carrinho de Compras"},
+                modifier = Modifier.padding(innerpadding),
+                title = { "Carrinho de Compras" },
                 actions = {
                     IconButton(onClick = {
                         navController.popBackStack()
-                        navController.navigate(Screen.Home(utilizador.value?.email))
+                        navController.navigate(Screen.ListaCarrinhos(utilizador.value?.email))
                     }) {
                         Icon(
-                            imageVector = Icons.Default.Home,
+                            imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Buscar",
                             tint = Color.White
                         )
@@ -141,46 +141,11 @@ fun CarrinhoUtilizadorScreen(navController: NavHostController, homeViewModel: Ho
                                 maxLines = 2
                             )
                         }
-                        IconButton(onClick = {
-                            try {
-                                coroutineScope.launch {
-                                    homeViewModel.removerProdutoCarrinho(Produto(produto.produtoId,produto.nome,produto.descricao,produto.foto,produto.preco), utilizador!!.value!!.id)
-                                }
-                            }catch (e: Exception){
-                                Log.d("Teste", "teste")
-                            }
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowDown,
-                                contentDescription = "Partilhar Carrinho",
-                                tint = Color.White
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        IconButton(onClick = {
-                            try {
-                                if(utilizador?.value?.id != null)
-                                    coroutineScope.launch {
-                                        homeViewModel.adicionarProdutoCarrinho(Produto(produto.produtoId,produto.nome,produto.descricao,produto.foto,produto.preco), utilizador!!.value!!.id)
-                                    }
-                            }catch (e: Exception){
-                                Log.d("Teste", "teste")
-                            }
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowUp,
-                                contentDescription = "Partilhar Carrinho",
-                                tint = Color.White
-                            )
-                        }
                     }
                     Divider(color = Color.LightGray, thickness = 1.dp)
                 }
             }
-
-
-
         }
     }
-}
 
+}

@@ -1,6 +1,7 @@
 package com.example.store.data.repository
 
 import android.util.Log
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.lifecycle.MutableLiveData
 import com.example.store.data.remote.model.ProdutoCarrinhoDto
 import com.example.store.domain.model.ProdutoCarrinho
@@ -21,7 +22,42 @@ import kotlinx.coroutines.tasks.await
 
 class CarrinhoRepositoryImpl {
     private val db: FirebaseFirestore = Firebase.firestore
-    private val produtos = MutableLiveData<Produto>()
+
+    suspend fun getProdutoCarrinho(produto: Produto, idUtilizador: String): ProdutoCarrinho?{
+        try {
+            val query = db.collection("Utilizadores")
+                .document(idUtilizador)
+                .collection("Carrinho")
+                .whereEqualTo("produtoId", produto.id)
+                .get()
+                .await()
+
+            val document = query.documents.firstOrNull()
+
+            document?.let {
+                val produtoCarrinhoDto = it.toObject(ProdutoCarrinhoDto::class.java)
+                return produtoCarrinhoDto?.toCarrinhoProduto(it.id)
+            }
+            return null
+        }catch (ex: Exception){
+            return null
+        }
+    }
+
+    suspend fun quantidadeProdutoCarrinho(produto: ProdutoCarrinhoDto, utilizadorId: String): Int?{
+        try {
+            val document = db.collection("Utilizadores")
+                .document(utilizadorId)
+                .collection("Carrinho")
+                .document(produto.produtoId)
+                .get()
+                .await()
+
+            return document.getLong("quantidade")?.toInt()
+        }catch (ex: Exception){
+            return null
+        }
+    }
 
     suspend fun addProductToCart(produto: ProdutoCarrinhoDto, utilizadorId: String): Boolean {
         try{
@@ -29,6 +65,22 @@ class CarrinhoRepositoryImpl {
                 .document(utilizadorId)
                 .collection("Carrinho")
                 .add(produto)
+                .await()
+
+            return true
+        }catch (e: Exception){
+            e.printStackTrace()
+            return false
+        }
+    }
+
+    suspend fun removerProdutoCarrinho(produto: ProdutoCarrinho, utilizadorId: String): Boolean {
+        try{
+            val documentId = db.collection("Utilizadores")
+                .document(utilizadorId)
+                .collection("Carrinho")
+                .document(produto.id)
+                .delete()
                 .await()
 
             return true
@@ -46,7 +98,7 @@ class CarrinhoRepositoryImpl {
                 .document(produto.id)
 
             documentId.update("quantidade", produto.quantidade + 1).await()
-
+            Log.d("ProdutosCarrinho", "Produtos Adicionados: ${produto.quantidade}")
             return true
         }catch (e: Exception){
             e.printStackTrace()
@@ -118,13 +170,11 @@ class CarrinhoRepositoryImpl {
                 }
                 if (querySnapshot != null) {
                     val produtos = querySnapshot.documents.mapNotNull { it.toObject(ProdutoCarrinhoDto::class.java) }
-                    Log.d("Firestore", "Produtos encontrados: $produtos")
+                    Log.d("ProdutosCarrinho", "Produtos encontrados funcao: observeProdutosCarrinho: $produtos")
                     trySend(produtos)
                 }
             }
         awaitClose { listenerRegistration.remove() }
     }
-
-
 
 }

@@ -79,7 +79,7 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel, e
                     actions = {
                         IconButton(onClick = {
                             if(utilizador.value != null)
-                                navController.navigate(Screen.ListaCarrinhos)
+                                navController.navigate(Screen.ListaCarrinhos(utilizador.value?.email))
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Menu,

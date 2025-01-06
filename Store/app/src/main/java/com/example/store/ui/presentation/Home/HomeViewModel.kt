@@ -20,11 +20,14 @@ import com.example.store.domain.use_case.UtilizadorUseCase
 import com.example.store.utils.showToastMessage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class HomeViewModel: ViewModel() {
@@ -54,6 +57,23 @@ class HomeViewModel: ViewModel() {
 
     private val _produtosCarrinho1 = MutableStateFlow<List<ProdutoCarrinhoDto>>(emptyList())
     val produtosCarrinho1: StateFlow<List<ProdutoCarrinhoDto>> get() = _produtosCarrinho1
+
+//    private val _produtosCarrinho2 = MutableStateFlow<List<ProdutoCarrinhoDto>>(emptyList())
+    val produtosCarrinho2: StateFlow<List<ProdutoApresentacao>> = _produtosCarrinho1
+    .flatMapLatest {produtosCarrinho ->
+        val detalhesFlowList = produtosCarrinho.map {produtoCarrinho ->
+            productUseCase.getProdutoByIdFlow(produtoCarrinho.produtoId)
+                .map {produto ->
+                    produtoCarrinho.toProdutosApresentacao(produto.nome, produto.descricao, produto.foto, produto.preco)
+                }
+        }
+
+        combine(detalhesFlowList) {it.toList()}
+    }.catch {ex ->
+        Log.e("CarrinhoViewModel", "Erro ao combinar dados: $ex")
+    }
+    .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
 
 
     init {
@@ -104,17 +124,17 @@ class HomeViewModel: ViewModel() {
         }
     }
 
-//    fun observeCarrinho(id: String) {
-//        viewModelScope.launch {
-//            carrinhoUseCase.observeDadosCarrinho(id)
-//                .catch { ex ->
-//                    Log.e("Produtos view model", "Erro ao observar produtos: $ex")
-//                }
-//                .collect { produtosAtualizado ->
-//                    _produtosCarrinho1.value = produtosAtualizado
-//                }
-//        }
-//    }
+    fun observeCarrinho(id: String) {
+        viewModelScope.launch {
+            carrinhoUseCase.observeDadosCarrinho(id)
+                .catch { ex ->
+                    Log.e("Produtos view model", "Erro ao observar produtos: $ex")
+                }
+                .collect { produtosAtualizado ->
+                    _produtosCarrinho1.value = produtosAtualizado
+                }
+        }
+    }
 
 //    fun observeCarrinho(id: String) {
 //        viewModelScope.launch {
@@ -129,81 +149,6 @@ class HomeViewModel: ViewModel() {
 //        }
 //    }
 
-    fun observeDetalhesCarrinho(userId: String){
-        viewModelScope.launch {
-            carrinhoUseCase.observeDadosCarrinho(userId)
-                .flatMapConcat { produtosCarrinho ->
-                    produtosCarrinho.map { produtoCarrinho ->
-                        productUseCase.getProdutoByIdFlow(produtoCarrinho.produtoId) // Retorna Flow<Produto>
-                            .map { produto ->
-                                produtoCarrinho.toProdutosApresentacao(produto.nome, produto.descricao, produto.foto, produto.preco)
-                            }
-                    }.let { flows -> combine(flows) { it.toList() } }
-                }
-                .catch {ex->
-                    Log.e("Produtos view model", "Erro ao observar produtos detalhados: $ex")
-                }
-                .collect{produtoApresentacao ->
-                    _produtosCarrinho.value = produtoApresentacao
-                }
-        }
-    }
-
-
-//    fun getCarrinho(id: String){
-//        viewModelScope.launch {
-//            carrinhoUseCase.getDadosCarrinho(id)
-//                .catch {
-//                    Log.e("Produtos Carrinho view model", "Erro ao observar produtos:")
-//                }
-//                .collect{carrinhoProdutos ->
-//                    // Lista para armazenar os produtos detalhados
-//                    val produtosDetalhados = mutableListOf<ProdutosShow>()
-//
-//                    // Para cada produto no carrinho, busque os detalhes
-//                    for (produto in carrinhoProdutos) {
-//                        try {
-//                            // Chama getProdutobyId diretamente, pois não é um Flow
-//                            val produtoDetalhado = productUseCase.getProdutobyId(produto.id)
-//
-//                            // Se o produto detalhado for encontrado, cria um Produto e adiciona à lista
-//                            produtoDetalhado?.let {
-//                                val prod = ProdutosShow(
-//                                    it.id,
-//                                    it.nome,
-//                                    it.descricao,
-//                                    it.foto,
-//                                    produto.quantidade,
-//                                    it.preco,
-//                                    produto.quantidade * it.preco
-//                                )
-//                                Log.d("Produtos Carrinho", prod.toString())
-//                                produtosDetalhados.add(prod)
-//                            }
-//                        } catch (e: Exception) {
-//                            Log.e("Produtos Carrinho view model", "Erro ao buscar detalhes do produto: ${e.message}")
-//                        }
-//                    }
-//
-//                    // Atualiza o StateFlow com a lista de produtos detalhados
-//                    Log.d("Produtos Carrinho", "produtosDetalhados")
-//                    _produtosCarrinho.value = produtosDetalhados
-//
-//
-//
-////                    val produtosDetalhado = mutableListOf<Flow<List<ProdutosShow>>>()
-////                    for(produto in carrinhoProdutos){
-////                        val produtoDetails = productUseCase.getProdutobyId(produto.id)
-////                        produtoDetails?.let {
-////                            var prod = ProdutosShow(it.id,it.descricao,it.descricao,it.foto, produto.quantidade, it.preco, (produto.quantidade * it.preco))
-////                            produtosDetalhado.add(prod)
-////                        }
-////                    }
-////                    _produtosCarrinho.value = produtosDetalhado
-//                }
-//        }
-//    }
-
         suspend fun fetchUtilizador(email: String?): Utilizador? {
             //return utilizadoresRepository.getUserById(email!!)
             return email?.let {
@@ -213,12 +158,15 @@ class HomeViewModel: ViewModel() {
         }
 
         suspend fun adicionarProdutoCarrinho(produto: Produto, utilizadorId: String) {
+            Log.d("Carrinho", "Adicionar PRoduto")
             carrinhoUseCase.adicionarProdutoCarrinho(produto, utilizadorId)
         }
 
-//        suspend fun adicionarProdutoCarrinho(produto: Produto, utilizadorId: String) {
-//            carrinhoUseCase.adicionarProdutoCarrinho(produto, utilizadorId)
-//        }
+
+        suspend fun removerProdutoCarrinho(produto: Produto, utilizadorId: String) {
+            Log.d("Carrinho", "Remover PRoduto")
+            carrinhoUseCase.removerProdutoCarrinho(produto, utilizadorId)
+        }
 
 
 }
