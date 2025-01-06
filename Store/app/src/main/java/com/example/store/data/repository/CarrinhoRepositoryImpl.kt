@@ -30,6 +30,7 @@ class CarrinhoRepositoryImpl {
                 .collection("Carrinho")
                 .add(produto)
                 .await()
+
             return true
         }catch (e: Exception){
             e.printStackTrace()
@@ -123,6 +124,7 @@ class CarrinhoRepositoryImpl {
             }
         awaitClose { listenerRegistration.remove() }
     }
+
 
 
 }

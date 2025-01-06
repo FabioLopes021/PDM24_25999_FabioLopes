@@ -1,5 +1,6 @@
 package com.example.store.ui.presentation.Home
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.util.Log
@@ -16,6 +17,7 @@ import com.example.store.domain.use_case.AuthUseCase
 import com.example.store.domain.use_case.CarrinhoUseCase
 import com.example.store.domain.use_case.ProdutoUseCase
 import com.example.store.domain.use_case.UtilizadorUseCase
+import com.example.store.utils.showToastMessage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -63,6 +65,17 @@ class HomeViewModel: ViewModel() {
             authUseCase.logout()
         } catch (e: Exception) {
             throw IllegalArgumentException(e.message)
+        }
+    }
+
+
+    suspend fun alterarVisibilidadeCarrinho(email: String, context: Context){
+        var utilizador = utilizadoresUseCase.getUtilizador(email!!)
+        if(utilizador != null){
+            if( !utilizadoresUseCase.alterarVisbilidadeCarrinho(utilizador, utilizador.id))
+                showToastMessage(context, "Erro ao alterar Visibilidade do carrinho")
+            else
+                showToastMessage(context, "Visibilidade do carrinho alterada para ${!utilizador.visibilidadeCarrinho}")
         }
     }
 
