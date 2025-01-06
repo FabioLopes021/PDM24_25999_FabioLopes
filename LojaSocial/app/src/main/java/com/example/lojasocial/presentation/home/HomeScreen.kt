@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.example.lojasocial.navigation.Route
+import com.example.lojasocial.utils.clearUserData
+import com.example.lojasocial.utils.showToastMessage
 import kotlinx.coroutines.launch
 
 
@@ -46,8 +48,13 @@ fun Home(navController: NavHostController,homeViewModel: HomeViewModel) {
             Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = {
                 coroutineScope.launch {
                     try {
-                        homeViewModel.logout()
-                        navController.navigate(Route.Login)
+                        if(clearUserData(context)){
+                            homeViewModel.logout()
+                            navController.navigate(Route.Login)
+                        }else{
+                            showToastMessage(context, "Erro ao dar signout")
+                        }
+
                     }catch (e: Exception){
                         Log.d("Teste", "teste")
                     }

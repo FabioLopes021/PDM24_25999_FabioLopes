@@ -2,9 +2,10 @@ package com.example.lojasocial.domain.model
 
 
 data class User(
+    val userId: String,
     val email: String,
     val name: String,
-    val apelido: String,
+    val surename: String,
     val picture: String,
-    val role: Int
+    val roleId: Int
 )

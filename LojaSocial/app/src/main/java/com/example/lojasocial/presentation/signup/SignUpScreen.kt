@@ -39,6 +39,7 @@ import com.example.lojasocial.R
 import com.example.lojasocial.domain.model.User
 import com.example.lojasocial.navigation.Route
 import com.example.lojasocial.utils.AuthState
+import com.example.lojasocial.utils.guardarDadosUtilizador
 import com.example.lojasocial.utils.showToastMessage
 import kotlinx.coroutines.launch
 
@@ -46,6 +47,9 @@ import kotlinx.coroutines.launch
 fun SignUp(navController: NavHostController, signUpViewModel: SignUpViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var suremane by remember { mutableStateOf("") }
+    var roleId by remember { mutableStateOf(Int) }
 
 
     val coroutineScope = rememberCoroutineScope()
@@ -75,6 +79,11 @@ fun SignUp(navController: NavHostController, signUpViewModel: SignUpViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
         TextField(value = password, label = { Text("Password") }, onValueChange = {password = it})
         Spacer(modifier = Modifier.height(24.dp))
+        TextField(value = name, label = { Text("nome") }, onValueChange = {name = it})
+        Spacer(modifier = Modifier.height(16.dp))
+        TextField(value = suremane, label = { Text("apelido") }, onValueChange = {suremane = it})
+        Spacer(modifier = Modifier.height(16.dp))
+        //TextField(value = roleId, label = { Text("Cargo") }, onValueChange = {roleId = it})
         Button(colors = ButtonDefaults.buttonColors(containerColor = Color.Black),onClick = {
             coroutineScope.launch {
                 try {
@@ -98,6 +107,9 @@ fun RegisterScreen(navController: NavHostController, signUpViewModel: SignUpView
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var suremane by remember { mutableStateOf("") }
+    var roleId by remember { mutableStateOf(Int) }
 
     val coroutineScope = rememberCoroutineScope()
     val authState = signUpViewModel.authState.observeAsState()
@@ -167,11 +179,43 @@ fun RegisterScreen(navController: NavHostController, signUpViewModel: SignUpView
             visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation()
         )
 
+        TextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Nome") },
+            modifier = Modifier.padding(bottom = 8.dp),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next
+            )
+        )
+
+        TextField(
+            value = suremane,
+            onValueChange = { suremane = it },
+            label = { Text("Apelido") },
+            modifier = Modifier.padding(bottom = 8.dp),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next
+            )
+        )
+
+//        TextField(
+//            value = roleId,
+//            onValueChange = { roleId = it },
+//            label = { Text("Email") },
+//            modifier = Modifier.padding(bottom = 8.dp),
+//            keyboardOptions = KeyboardOptions.Default.copy(
+//                imeAction = ImeAction.Next
+//            )
+//        )
+
         Button(onClick = {
             if(password == confirmPassword){
                 coroutineScope.launch {
                     try {
                         user = signUpViewModel.register(email,password, context)
+                        val userSave = User("", email, name, suremane, "", 1)
+                        guardarDadosUtilizador(context, userSave)
                     }catch (e: Exception){
                         Log.d("Teste", "teste")
                     }

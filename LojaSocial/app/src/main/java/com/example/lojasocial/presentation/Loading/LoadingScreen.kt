@@ -1,5 +1,6 @@
 package com.example.lojasocial.presentation.Loading
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.lojasocial.navigation.Route
@@ -24,8 +26,10 @@ import com.example.lojasocial.navigation.Route
 @Composable
 fun loadingApp(navController: NavHostController, loadingViewModel: LoadingViewModel){
     val isLoggedIn by loadingViewModel.isLoggedIn.observeAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(isLoggedIn) {
+        loadingViewModel.isLoggedIn(context)
         isLoggedIn?.let {
             if (it) {
                 navController.navigate(Route.Home)

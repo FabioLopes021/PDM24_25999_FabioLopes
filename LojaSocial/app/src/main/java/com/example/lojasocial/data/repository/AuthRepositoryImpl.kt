@@ -1,6 +1,7 @@
 package com.example.lojasocial.data.repository
 
 import android.util.Log
+import com.example.lojasocial.data.remote.model.UserAuthDto
 import com.example.lojasocial.data.remote.model.Userdto
 import com.example.lojasocial.domain.model.User
 import com.example.lojasocial.domain.repository.AuthRepository
@@ -16,13 +17,13 @@ class AuthRepositoryImpl(private val auth: FirebaseAuth): AuthRepository {
 
     override suspend fun register(email: String, password: String): User? {
         return try {
-            val userDto = suspendCoroutine<Userdto?> { continuation ->
+            val userDto = suspendCoroutine<UserAuthDto?> { continuation ->
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val currentUser = auth.currentUser
                             if (currentUser != null) {
-                                continuation.resume(Userdto(currentUser.email.toString()))
+                                continuation.resume(UserAuthDto(currentUser.email.toString()))
                             } else {
                                 continuation.resumeWithException(IllegalStateException("User not found after registration"))
                             }
@@ -70,13 +71,13 @@ class AuthRepositoryImpl(private val auth: FirebaseAuth): AuthRepository {
 //    }
     override suspend fun login(email: String, password: String): User? {
         return try {
-            val userDto = suspendCoroutine<Userdto?> { continuation ->
+            val userDto = suspendCoroutine<UserAuthDto?> { continuation ->
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val currentUser = auth.currentUser
                             if (currentUser != null) {
-                                continuation.resume(Userdto(currentUser.email.toString()))
+                                continuation.resume(UserAuthDto(currentUser.email.toString()))
                             } else {
                                 continuation.resumeWithException(IllegalStateException("User not found after login"))
                             }
