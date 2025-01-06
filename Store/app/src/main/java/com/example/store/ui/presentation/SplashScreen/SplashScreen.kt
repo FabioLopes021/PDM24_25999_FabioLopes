@@ -25,7 +25,6 @@ fun SplashScreen(viewModel: SplashViewModel, navController: NavHostController) {
         }
     }
 
-    // Mostre um loader ou animação enquanto verifica o estado
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }

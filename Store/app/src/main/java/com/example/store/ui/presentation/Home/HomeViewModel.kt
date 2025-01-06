@@ -52,14 +52,9 @@ class HomeViewModel: ViewModel() {
     val produtos: StateFlow<List<Produto>> get() = _produtos
 
     //Produtos CarrinhoUtilizador
-    private val _produtosCarrinho = MutableStateFlow<List<ProdutoApresentacao>>(emptyList())
-    val produtosCarrinho: StateFlow<List<ProdutoApresentacao>> get() = _produtosCarrinho
+    private val _produtosCarrinho = MutableStateFlow<List<ProdutoCarrinhoDto>>(emptyList())
 
-    private val _produtosCarrinho1 = MutableStateFlow<List<ProdutoCarrinhoDto>>(emptyList())
-    val produtosCarrinho1: StateFlow<List<ProdutoCarrinhoDto>> get() = _produtosCarrinho1
-
-//    private val _produtosCarrinho2 = MutableStateFlow<List<ProdutoCarrinhoDto>>(emptyList())
-    val produtosCarrinho2: StateFlow<List<ProdutoApresentacao>> = _produtosCarrinho1
+    var produtosCarrinho: StateFlow<List<ProdutoApresentacao>> = _produtosCarrinho
     .flatMapLatest {produtosCarrinho ->
         val detalhesFlowList = produtosCarrinho.map {produtoCarrinho ->
             productUseCase.getProdutoByIdFlow(produtoCarrinho.produtoId)
@@ -78,6 +73,10 @@ class HomeViewModel: ViewModel() {
 
     init {
         getProdutos()
+    }
+
+    fun clearCarrinho() {
+        _produtosCarrinho.value = emptyList()  // Limpa a lista de produtos no carrinho
     }
 
     suspend fun logout() {
@@ -100,18 +99,6 @@ class HomeViewModel: ViewModel() {
     }
 
 
-//    private fun observeProducts(){
-//        viewModelScope.launch {
-//            productUseCase.getProdutos()
-//                .catch {e ->
-//                    Log.e("Produtos view model", "Erro ao observar produtos: $e")
-//                }
-//                .collect{produtosAtualizados ->
-//                    _produtos.value = produtosAtualizados
-//                }
-//        }
-//    }
-
     private fun getProdutos() {
         viewModelScope.launch {
             productUseCase.getProdutos()
@@ -131,42 +118,29 @@ class HomeViewModel: ViewModel() {
                     Log.e("Produtos view model", "Erro ao observar produtos: $ex")
                 }
                 .collect { produtosAtualizado ->
-                    _produtosCarrinho1.value = produtosAtualizado
+                    _produtosCarrinho.value = produtosAtualizado
                 }
         }
     }
 
-//    fun observeCarrinho(id: String) {
-//        viewModelScope.launch {
-//            carrinhoUseCase.observeDadosCarrinho(id)
-//                .catch { ex ->
-//                    Log.e("Produtos view model", "Erro ao observar produtos: $ex")
-//                }
-//                .collect { produtosAtualizado ->
-//                    //_produtosCarrinho1.value = produtosAtualizado
-//                    _produtosCarrinho.value = produtosAtualizado
-//                }
-//        }
-//    }
-
-        suspend fun fetchUtilizador(email: String?): Utilizador? {
-            //return utilizadoresRepository.getUserById(email!!)
-            return email?.let {
-                Log.d("email", utilizadoresUseCase.getUtilizador(it).toString())
-                utilizadoresUseCase.getUtilizador(it)
-            }
+    suspend fun fetchUtilizador(email: String?): Utilizador? {
+        //return utilizadoresRepository.getUserById(email!!)
+        return email?.let {
+            Log.d("email", utilizadoresUseCase.getUtilizador(it).toString())
+            utilizadoresUseCase.getUtilizador(it)
         }
+    }
 
-        suspend fun adicionarProdutoCarrinho(produto: Produto, utilizadorId: String) {
-            Log.d("Carrinho", "Adicionar PRoduto")
-            carrinhoUseCase.adicionarProdutoCarrinho(produto, utilizadorId)
-        }
+    suspend fun adicionarProdutoCarrinho(produto: Produto, utilizadorId: String) {
+        Log.d("Carrinho", "Adicionar PRoduto")
+        carrinhoUseCase.adicionarProdutoCarrinho(produto, utilizadorId)
+    }
 
 
-        suspend fun removerProdutoCarrinho(produto: Produto, utilizadorId: String) {
-            Log.d("Carrinho", "Remover PRoduto")
-            carrinhoUseCase.removerProdutoCarrinho(produto, utilizadorId)
-        }
+    suspend fun removerProdutoCarrinho(produto: Produto, utilizadorId: String) {
+        Log.d("Carrinho", "Remover PRoduto")
+        carrinhoUseCase.removerProdutoCarrinho(produto, utilizadorId)
+    }
 
 
 }

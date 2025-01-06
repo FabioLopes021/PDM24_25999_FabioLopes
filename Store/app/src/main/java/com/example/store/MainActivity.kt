@@ -21,8 +21,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             StoreTheme {
-//                val SpashViewModel: SplashViewModel by viewModels()
-//                val authViewModel: AuthViewModel by viewModels()
                 val navController = rememberNavController();
                 SetupNavGraph(navController)
             }

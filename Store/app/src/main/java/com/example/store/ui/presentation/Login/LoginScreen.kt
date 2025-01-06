@@ -35,8 +35,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Login(navController: NavHostController, loginViewModel: LoginViewModel) {
-//    var email by remember { mutableStateOf("") }
-//    var password by remember { mutableStateOf("") }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -52,8 +50,6 @@ fun Login(navController: NavHostController, loginViewModel: LoginViewModel) {
                 }else{
                     Log.d("Teste", "Antes da rota home, user != null")
                 }
-
-                //navController.navigate(Route.Home(user!!.email))
                 navController.navigate(Screen.Home(user!!.email))
             }
             is AuthState.Error -> showToastMessage(context,(authState.value as AuthState.Error).message)

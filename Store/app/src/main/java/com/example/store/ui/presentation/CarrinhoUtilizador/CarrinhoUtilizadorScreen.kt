@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 fun CarrinhoUtilizadorScreen(navController: NavHostController, homeViewModel: HomeViewModel, email: String?) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val carrinho by homeViewModel.produtosCarrinho2.collectAsState()
+    val carrinho by homeViewModel.produtosCarrinho.collectAsState()
 
     var utilizador = remember { mutableStateOf<Utilizador?>(null) }
 
@@ -62,10 +62,12 @@ fun CarrinhoUtilizadorScreen(navController: NavHostController, homeViewModel: Ho
         email?.let{
             Log.d("Produtos Carrinho","Passou aqui")
             utilizador.value = homeViewModel.fetchUtilizador(email)
+            homeViewModel.clearCarrinho()
             Log.d("Produtos Carrinho", "${utilizador.value!!.nome}")
-            if(utilizador.value != null)
-                //homeViewModel.observeDetalhesCarrinho(utilizador.value!!.id)
+            if(utilizador.value != null){
                 homeViewModel.observeCarrinho(utilizador.value!!.id)
+                Log.d("Produtos Carrinho","Passou aqui, Atualizou o utilizador!")
+            }
         }
     }
 
@@ -95,9 +97,6 @@ fun CarrinhoUtilizadorScreen(navController: NavHostController, homeViewModel: Ho
                     titleContentColor = Color.White
                 )
             )
-
-            //Lista
-
             LazyColumn {
                 items(carrinho) { produto ->
                     Row(
@@ -117,11 +116,9 @@ fun CarrinhoUtilizadorScreen(navController: NavHostController, homeViewModel: Ho
                         )
 
                         Spacer(modifier = Modifier.width(16.dp))
-
-                        // Nome e descrição do produto
                         Column(
                             modifier = Modifier
-                                .weight(1f) // Ocupa o espaço restante
+                                .weight(1f)
                         ) {
                             Text(
                                 text = produto.nome,
@@ -177,9 +174,6 @@ fun CarrinhoUtilizadorScreen(navController: NavHostController, homeViewModel: Ho
                     Divider(color = Color.LightGray, thickness = 1.dp)
                 }
             }
-
-
-
         }
     }
 }
