@@ -81,7 +81,7 @@ fun CarrinhoScreen(navController: NavHostController, carrinhoViewModel: Carrinho
                 actions = {
                     IconButton(onClick = {
                         navController.popBackStack()
-                        navController.navigate(Screen.ListaCarrinhos(utilizador.value?.email))
+                        navController.navigate(Screen.ListaCarrinhos(""))
                     }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,

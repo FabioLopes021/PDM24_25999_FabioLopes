@@ -57,6 +57,7 @@ sealed class Screen{
 fun SetupNavGraph(navController: NavHostController){
 
     val homeViewModel: HomeViewModel = viewModel()
+    val listaCarrinhosViewModel: ListaCarrinhosViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -85,7 +86,6 @@ fun SetupNavGraph(navController: NavHostController){
         }
         composable<Screen.ListaCarrinhos>{backStackEntry ->
             val email = backStackEntry.toRoute<Screen.ListaCarrinhos>()
-            val listaCarrinhosViewModel: ListaCarrinhosViewModel = viewModel()
             ListaCarrinhosScreen(navController = navController, listaCarrinhosViewModel, email.email)
         }
         composable<Screen.Carrinho>{backStackEntry ->

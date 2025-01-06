@@ -57,7 +57,8 @@ fun ListaCarrinhosScreen(navController: NavHostController, listaCarrinhosViewMod
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val utilizadores by listaCarrinhosViewModel.CarrinhosPartilhados.collectAsState()
-
+    if(email != "")
+        listaCarrinhosViewModel.utilizador.value = email!!
 
 
     Scaffold { innerpadding ->
@@ -71,7 +72,7 @@ fun ListaCarrinhosScreen(navController: NavHostController, listaCarrinhosViewMod
                 title = {"Carrinho Publicos"},
                 actions = {
                     IconButton(onClick = {
-                        navController.navigate(Screen.Home(email))
+                        navController.navigate(Screen.Home(listaCarrinhosViewModel.utilizador.value))
                     }) {
                         Icon(
                             imageVector = Icons.Default.Home,

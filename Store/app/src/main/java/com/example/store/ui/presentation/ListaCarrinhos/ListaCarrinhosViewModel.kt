@@ -1,6 +1,8 @@
 package com.example.store.ui.presentation.ListaCarrinhos
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.store.data.repository.CarrinhoRepositoryImpl
@@ -29,6 +31,7 @@ class ListaCarrinhosViewModel(): ViewModel() {
     private val _CarrinhosPartilhados = MutableStateFlow<List<Utilizador>>(emptyList())
     val CarrinhosPartilhados: StateFlow<List<Utilizador>> get() = _CarrinhosPartilhados
 
+    var utilizador = mutableStateOf("")
 
     init {
         lerUtilizadoresComCarrinhoPublico()
